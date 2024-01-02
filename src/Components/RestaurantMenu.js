@@ -9,11 +9,10 @@ import {
 } from "../constants";
 
 export const ItemsWrapper =({data})=>{
-  console.log(data)
   const dispatch = useDispatch();
-  const handleClick = (name)=>{
-    console.log('function called')
-    dispatch(addItems(name))
+  const handleClick = (data)=>{
+    console.log("data is",data)
+    dispatch(addItems(data))
   }
   const [itemCount, setItemCount] = useState(0);
   return (

@@ -1,14 +1,15 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import FoodFireLogo from "../Images/Food Fire Logo.png";
 import { Link, useLocation } from "react-router-dom"; // imported Link for client side routing
 import { useNavigate } from "react-router-dom";
 import useOnline from "../Hooks/useOnline";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useAddress from "../Hooks/useAddress";
 import useGeoLocation from "../Hooks/useGeoLocation";
 import AddressContext from "../utils/AddressContext";
 import LocationContext from "../utils/LocationContext";
 import LoginComponent from "./Login";
+import { removeUser } from "../utils/userSlice";
 
 // Title component for display logo
 const Title = () => (
@@ -32,6 +33,12 @@ const Header = () => {
   const items = useSelector((state)=>state.cart.items)
   const address = useContext(AddressContext);
   const [showLogin, setShowLogin] = useState(false);
+  const user = useSelector((state)=>state.user);
+  const [islogin,setIsLogin] = useState(false);
+  const dispatch = useDispatch();
+  useEffect(()=>{
+
+  },[islogin])
 
   return (
     <div className=" flex justify-between items-center  shadow-lg z-10 w-full bg-slate-50 relative">
@@ -56,16 +63,33 @@ const Header = () => {
             <Link to="/cart">cart({items.length})</Link>
           </li>
           <li className=" p-3 mr-10 hover:text-black">
-            <i className="fa-solid fa-cart-shopping"></i>
-          </li>
-          <li className=" p-3 mr-10 hover:text-black">
-            <button onClick={() => setShowLogin(!showLogin)}>
-              login {useOnline()? <span className=" text-green-600 text-sm">●</span> : <span className=" text-red-500 text-sm">●</span>}
-            </button>
+          {islogin ? (
+            <>
+            <span className=" text-orange-500">{user[0]?.name} </span>
+              <button
+                onClick={() => {
+                  setIsLogin(false);
+                  dispatch(removeUser());
+                }}
+              >
+                Logout
+              </button>
+            </>
+            
+            ) : (
+              <button onClick={() => setShowLogin(!showLogin)}>
+                Login
+              </button>
+            )}
+            {useOnline() ? (
+              <span className="text-green-600 text-sm">●</span>
+            ) : (
+              <span className="text-red-500 text-sm">●</span>
+            )}
           </li>
         </ul>
       </div>
-      {showLogin && <LoginComponent setShowLogin={setShowLogin}/>}
+      {showLogin && <LoginComponent setIsLogin={setIsLogin}/>}
     </div>
   );
 };
